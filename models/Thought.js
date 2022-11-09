@@ -1,16 +1,14 @@
 const { Schema, model } = require('mongoose');
 const {dateFormat} = require('../utils/helpers');
+const Reaction = require('./Reaction');
 
 
 const thoughtSchema = new Schema(
   {
-    thoughtText: { String, required: "Enter a thoughtText", minLength: 1, maxLength: 280 },
+    thoughtText: { type: String, required: "Enter a thoughtText", minLength: 1, maxLength: 280 },
     createdAt: { type: Date, default: Date.now, get: (thoughtTimeStamp) => dateFormat(thoughtTimeStamp) }, 
-    username: { String, required: "Enter a Unique Username" },
-    reactions: [{
-        type: Schema.Types.ObjectId,
-        ref: 'reactions',
-                }],
+    username: { type: String, required: "Enter a Unique Username" },
+    reactions: [Reaction],
     
   },
   {

@@ -10,13 +10,13 @@ module.exports = {
         } else {
             res.status(404).json('Error!')
         }
-    } catch {
-        res.status(500).json('Server Error!')
+    } catch (err) {
+        res.status(500).json(err)
     }
 },
 async findUser(req, res) {
     try {
-        let userData = await User.find();
+        let userData = await User.find().populate('thoughts').populate('friends');
         if (userData) {
             res.status(200).json(userData)
         } else {
@@ -28,7 +28,7 @@ async findUser(req, res) {
 },
 async findOneUser(req, res) {
     try {
-        let userData = await User.findOne({_id: req.params._id});
+        let userData = await User.findOne({_id: req.params.id}).populate('thoughts').populate('friends');
         if (userData) {
             res.status(200).json(userData)
         } else {
@@ -40,7 +40,7 @@ async findOneUser(req, res) {
 },
 async updateUser(req, res) {
     try {
-        let userData = await User.findOneAndUpdate({_id: req.params._id}, req.body,{returnOriginal: false});
+        let userData = await User.findOneAndUpdate({_id: req.params.id}, req.body,{returnOriginal: false});
         if (userData) {
             res.status(200).json(userData)
         } else {
@@ -52,7 +52,7 @@ async updateUser(req, res) {
 },
 async deleteUser(req, res) {
     try {
-        let userData = await User.findOneAndUpdate({_id: req.params._id});
+        let userData = await User.findOneAndDelete({_id: req.params.id});
         if (userData) {
             res.status(200).json(userData)
         } else {
@@ -64,8 +64,8 @@ async deleteUser(req, res) {
 },
 async addUserFriend(req, res) {
     try {
-        let userData = await User.findOneAndUpdate({_id: req.params._id}, {$push: {friends: req.params.friendId}},{returnOriginal: false});
-        let userDataRemove = await User.findOneAndUpdate({friends: req.params.friendId}, {$push: {_id: req.params._id}},{returnOriginal: false});
+        let userData = await User.findOneAndUpdate({_id: req.params.id}, {$push: {friends: req.params.friendId}},{returnOriginal: false});
+        let userDataRemove = await User.findOneAndUpdate({_id: req.params.friendId}, {$push: {friends: req.params.id}},{returnOriginal: false});
         if (userData) {
             res.status(200).json(userData)
         } else {
@@ -77,7 +77,7 @@ async addUserFriend(req, res) {
 },
 async deleteFriend(req, res) {
     try {
-        let userData = await User.findOneAndUpdate({_id: req.params._id}, {$push: {friends: req.params.friendId}},{returnOriginal: false});
+        let userData = await User.findOneAndUpdate({_id: req.params.id}, {$push: {friends: req.params.friendId}},{returnOriginal: false});
         if (userData) {
             res.status(200).json(userData)
         } else {
